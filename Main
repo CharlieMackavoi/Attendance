@@ -1,0 +1,235 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Formatter;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+
+
+
+public class Main {
+
+    public static String fileToBeRead="C:/Users/Snake/Desktop/Read.xls";
+    public static String fileToBeRead2="C:/Users/Snake/Desktop/emp_Codes.xls";
+    static int totalCampers = 0;
+    static int employNum = 0;
+    
+    static String[] Names = new String[400];
+   // static String[] Groups = new String[400];
+   // static String[] Counselors = new String[400];
+    static String[] Numbers = new String[400];
+    static String[] Employee = new String[150];
+        /**
+         * Create the GUI and show it.  For thread safety,
+         * this method should be invoked from the
+         * event-dispatching thread.
+         *
+        private static void createAndShowGUI() {
+            //Create and set up the window.
+            JFrame frame = new JFrame("Good Times Attendance");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.setSize(500, 500);
+            frame.setVisible(true);
+        }
+    */
+  /**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		/*javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });*/
+
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(fileToBeRead));
+		HSSFSheet sheet = workbook.getSheet("Sheet1");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input;
+		HSSFWorkbook workbookEMP = new HSSFWorkbook(new FileInputStream(fileToBeRead2));
+		HSSFSheet sheetEMP = workbookEMP.getSheet("Sheet1");
+		
+		System.out.println("///////////////////////////////");
+		System.out.println("/Good Times Attendence Program/");
+		System.out.println("///////////////////////////////");
+		System.out.println("///////////////////////////////");
+		System.out.println("////Text Based Version 0.99////");
+		System.out.println("///////////////////////////////");
+		System.out.println(" ");
+		System.out.println(" ");
+		System.out.println(" ");
+		
+		do{
+		do{
+		
+		System.out.print("Enter a code: ");
+		input = br.readLine();
+		if(input.startsWith("e")){
+			employee(input, sheetEMP);
+		}else{
+			if(!input.equals("quit")){
+			campers(input, sheet);
+		}
+		}
+		}while(!input.equals("quit"));
+		
+		System.out.print("Are you sure you want to quit? ('yes' to quit) ");
+		input = br.readLine();
+		
+	}while(!input.equals("yes"));
+	
+
+		FileOutputStream fout = new FileOutputStream ("HWY18.xls");
+		HSSFWorkbook workbookFinish = new HSSFWorkbook();
+		HSSFSheet sheetFinish = workbookFinish.createSheet("Sheet1");
+		HSSFRow row = sheetFinish.createRow((short)0);
+		HSSFCell cell = row.createCell((short) 0);
+		int i = 0;
+		int temp = 0;
+		for(; i < totalCampers; i++){
+			cell = row.createCell((short) i);
+			temp = Integer.valueOf( Numbers[i] ).intValue();
+			cell.setCellValue(temp);
+		}
+		cell = row.createCell((short) i);
+		cell.setCellValue(999999);
+		workbookFinish.write(fout);
+		
+		fout = new FileOutputStream ("EmpTime.xls");
+		workbookFinish = new HSSFWorkbook();
+		sheetFinish = workbookFinish.createSheet("Sheet2");
+		row = sheetFinish.createRow((short)0);
+		cell = row.createCell((short) 0);
+		i = 0;
+		for(; i < employNum; i++){
+			row = sheetFinish.createRow((short)i);
+			cell = row.createCell((short) 0);
+			cell.setCellValue(Employee[i]);
+		}
+		row = sheetFinish.createRow((short)i);
+		cell = row.createCell((short) 0);
+		cell.setCellValue(999999);
+		workbookFinish.write(fout);
+		
+		
+		System.exit(0);
+
+  }
+
+
+	public static void employee(String empNum, HSSFSheet empSheet){
+		Date todaysDate = new java.util.Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				"EEE, dd-MMM HH:mm");
+
+		String formattedDate = formatter.format(todaysDate);
+		String employ;
+		String employHere;
+		String enterEmploy;
+		for(int i = 0;i < 100;i++){
+			HSSFRow row = empSheet.getRow(i);
+			HSSFCell cell = row.getCell(0);
+			employ = cell.getStringCellValue();
+			if(employ.equals("e999999")){
+				break;
+			}
+			if(employ.equals(empNum)){
+				cell = row.getCell((short) 1);
+				employHere = cell.getStringCellValue();
+				System.out.println(employHere + " " + formattedDate);
+				enterEmploy = (employHere + " " + formattedDate);
+				Employee[employNum] = enterEmploy;
+				employNum++;
+				return;
+			}
+			}
+		System.out.println("Code : " + empNum + " : is not in the system.");
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void campers(String camNum, HSSFSheet camSheet){
+		try {
+			if(checkCamper(camNum)){
+				return;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int temp = 0;
+		String child;  //, Counselor, Group;
+		int numberInput;
+		try {
+			numberInput = Integer.valueOf( camNum ).intValue();
+		} catch (NumberFormatException e) {
+			System.out.println("ERROR: " + camNum + " is not valid input!!!");
+			return;
+		}
+		for(int i = 1;i < 650;i++){
+			HSSFRow row = camSheet.getRow(i);
+			HSSFCell cell = row.getCell((short)0);
+			temp = (int) cell.getNumericCellValue();
+			if(temp == numberInput){
+				cell = row.getCell((short) 4);
+				child = cell.getStringCellValue();
+				/*cell = row.getCell((short) 2);
+				Group = cell.getStringCellValue();
+				cell = row.getCell((short) 1);
+				Counselor = cell.getStringCellValue();*/
+				Names[totalCampers] = child;
+				//Counselors[totalCampers] = Counselor;
+				//Groups[totalCampers] = Group;
+				Numbers[totalCampers] = camNum;
+				
+				System.out.println(child + " has been checked in.");
+				totalCampers++;
+				return;
+			}
+		}
+		System.out.println("Code : " + numberInput + " : is not in the system.");
+	}
+
+
+	private static boolean checkCamper(String camNum) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input;
+		for(int i = 0; i < totalCampers; i++){
+			if(camNum.equals(Numbers[i])){
+				System.out.print(Names[i]);
+				System.out.println(" is already checked in.");
+				System.out.println("Would you like to check this camper out?(y/n)");
+				input = br.readLine();
+				if(input.equals("y")){
+					System.out.println(Names[i] + " has been removed.");
+					Names[i] = Names[totalCampers - 1];
+					//Groups[i] = Groups[totalCampers - 1];
+					Numbers[i] = Numbers[totalCampers - 1];
+					//Counselors[i] = Counselors[totalCampers - 1];
+					totalCampers--;
+				}
+				return true;	
+			}
+		}
+		return false;
+		
+	}
+	}
