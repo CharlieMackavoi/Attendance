@@ -1,0 +1,145 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import java.io.FileInputStream;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+
+
+public class Main {
+
+    public static String fileToBeRead="C:/Users/Snake/Desktop/Read.xls";
+   // Camper[] A;
+        /**
+         * Create the GUI and show it.  For thread safety,
+         * this method should be invoked from the
+         * event-dispatching thread.
+         *
+        private static void createAndShowGUI() {
+            //Create and set up the window.
+            JFrame frame = new JFrame("Good Times Attendance");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.setSize(500, 500);
+            frame.setVisible(true);
+        }
+    */
+  /**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		/*javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });*/
+
+		HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(fileToBeRead));
+		HSSFSheet sheet = workbook.getSheet("Sheet1");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input;
+		
+		System.out.println("///////////////////////////////");
+		System.out.println("/Good Times Attendence Program/");
+		System.out.println("///////////////////////////////");
+		System.out.println("///////////////////////////////");
+		System.out.println("////Text Based Version 0.9/////");
+		System.out.println("///////////////////////////////");
+		System.out.println(" ");
+		System.out.println(" ");
+		System.out.println(" ");
+		
+		do{
+		do{
+		
+		System.out.print("Enter a code: ");
+		input = br.readLine();
+			if(!input.equals("quit")){
+			camper(input, sheet, br);
+		}
+		
+		}while(!input.equals("quit"));
+		
+		System.out.print("Are you sure you want to quit? ('yes' to quit) ");
+		input = br.readLine();
+		
+	}while(!input.equals("yes"));
+	
+		System.exit(0);
+
+  }
+
+	
+	@SuppressWarnings("deprecation")
+	public static void camper(String camNum, HSSFSheet camSheet, BufferedReader br) throws IOException{
+		int temp = 0;
+		int i = 1;
+		String child, Parent, input;
+		int numberInput;
+		try {
+			numberInput = Integer.valueOf(camNum).intValue();
+		} catch (Exception e) {
+			System.out.println(camNum + "is not an integer");
+			return;
+		}
+		do{
+			HSSFRow row = camSheet.getRow(i);
+			HSSFCell cell = row.getCell((short)0);
+			temp = (int) cell.getNumericCellValue();
+			if(temp == numberInput){
+				int sector = 4;
+				cell = row.getCell((short) sector);
+				child = cell.getStringCellValue();
+				System.out.print(child + " who is a ");
+				cell = row.getCell((short) 2);
+				Parent = cell.getStringCellValue();
+				System.out.println(Parent + " is going home with?");
+				while(sector < 14){
+					cell = row.getCell((short) ++sector);
+					Parent = cell.getStringCellValue();
+					if(Parent.equals("")){
+						break;
+					}
+					System.out.print(sector - 4 + ") ");
+					System.out.println(Parent);
+				}
+				System.out.println(" ");
+				do{
+				System.out.print("Enter Number: ");
+				input = br.readLine();
+				try {
+					temp = Integer.valueOf(input).intValue();
+				} catch (Exception e) {
+					System.out.println(input + " is not an integer");
+					temp = 16;
+				}
+				}while(temp > sector - 5);
+				cell = row.getCell((short) 4 + temp);
+				Parent = cell.getStringCellValue();
+				Date todaysDate = new java.util.Date();
+				SimpleDateFormat formatter = new SimpleDateFormat(
+						"EEE, dd-MMM-yyyy HH:mm:ss");
+
+				String formattedDate = formatter.format(todaysDate);
+				System.out.println(child + " was taken home by " + Parent + " on " + formattedDate);
+				return;
+			}
+			i++;
+		}while(temp != 999999);
+		System.out.println("Code : " + numberInput + " : is not in the system.");
+	}
+	}
+
