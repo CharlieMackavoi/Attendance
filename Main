@@ -32,9 +32,6 @@ public class Main {
     static int totalCampers = 0;
     static int employNum = 0;
     
-    static String[] Names = new String[400];
-   // static String[] Groups = new String[400];
-   // static String[] Counselors = new String[400];
     static String[] Numbers = new String[400];
     static String[] Employee = new String[150];
         /**
@@ -191,13 +188,7 @@ public class Main {
 			if(temp == numberInput){
 				cell = row.getCell((short) 4);
 				child = cell.getStringCellValue();
-				/*cell = row.getCell((short) 2);
-				Group = cell.getStringCellValue();
-				cell = row.getCell((short) 1);
-				Counselor = cell.getStringCellValue();*/
 				Names[totalCampers] = child;
-				//Counselors[totalCampers] = Counselor;
-				//Groups[totalCampers] = Group;
 				Numbers[totalCampers] = camNum;
 				
 				System.out.println(child + " has been checked in.");
@@ -221,9 +212,7 @@ public class Main {
 				if(input.equals("y")){
 					System.out.println(Names[i] + " has been removed.");
 					Names[i] = Names[totalCampers - 1];
-					//Groups[i] = Groups[totalCampers - 1];
 					Numbers[i] = Numbers[totalCampers - 1];
-					//Counselors[i] = Counselors[totalCampers - 1];
 					totalCampers--;
 				}
 				return true;	
